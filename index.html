@@ -6,6 +6,118 @@
     <title>Lambo Traffic Racer - High-Speed Racing Adventure | Lambo Traffic</title>
     <meta name="description" content="Experience the thrill of high-speed racing in Lambo Traffic Racer. Navigate through traffic, perform stunts, and become the ultimate racing champion in this exciting HTML5 game.">
     <link rel="canonical" href="https://lambotraffic.info/lambo-traffic-racer" />
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-1NY92K8M7K');
+
+        // 游戏事件跟踪
+        function trackGameEvent(eventName, eventParams = {}) {
+            gtag('event', eventName, {
+                'game_name': 'Lambo Traffic Racer',
+                'page_location': window.location.href,
+                ...eventParams
+            });
+        }
+
+        // 页面加载时跟踪
+        window.addEventListener('load', function() {
+            trackGameEvent('page_view');
+        });
+
+        // iframe 加载完成时跟踪
+        document.querySelector('iframe').addEventListener('load', function() {
+            trackGameEvent('game_loaded');
+        });
+
+        // 监听来自游戏的消息
+        window.addEventListener('message', function(event) {
+            // 确保消息来源是游戏域名
+            if (event.origin !== 'https://html5.gamedistribution.com') return;
+
+            const data = event.data;
+            
+            // 根据消息类型跟踪不同事件
+            switch(data.type) {
+                case 'game_start':
+                    trackGameEvent('game_start', {
+                        'level': data.level || 1,
+                        'difficulty': data.difficulty || 'normal'
+                    });
+                    break;
+                    
+                case 'game_end':
+                    trackGameEvent('game_end', {
+                        'score': data.score || 0,
+                        'level': data.level || 1,
+                        'time_played': data.timePlayed || 0,
+                        'coins_collected': data.coins || 0
+                    });
+                    break;
+                    
+                case 'level_complete':
+                    trackGameEvent('level_complete', {
+                        'level': data.level || 1,
+                        'score': data.score || 0,
+                        'stars': data.stars || 0
+                    });
+                    break;
+                    
+                case 'achievement_unlocked':
+                    trackGameEvent('achievement_unlocked', {
+                        'achievement_name': data.name,
+                        'achievement_id': data.id
+                    });
+                    break;
+                    
+                case 'car_unlocked':
+                    trackGameEvent('car_unlocked', {
+                        'car_name': data.carName,
+                        'car_id': data.carId
+                    });
+                    break;
+                    
+                case 'power_up_collected':
+                    trackGameEvent('power_up_collected', {
+                        'power_up_type': data.powerUpType,
+                        'level': data.level || 1
+                    });
+                    break;
+                    
+                case 'crash':
+                    trackGameEvent('crash', {
+                        'level': data.level || 1,
+                        'score': data.score || 0,
+                        'crash_type': data.crashType || 'unknown'
+                    });
+                    break;
+            }
+        });
+
+        // 跟踪用户交互事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 跟踪游戏容器点击
+            const gameContainer = document.querySelector('.game-container');
+            if (gameContainer) {
+                gameContainer.addEventListener('click', function() {
+                    trackGameEvent('game_container_click');
+                });
+            }
+
+            // 跟踪导航链接点击
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function() {
+                    trackGameEvent('navigation_click', {
+                        'link_text': this.textContent,
+                        'link_url': this.href
+                    });
+                });
+            });
+        });
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
